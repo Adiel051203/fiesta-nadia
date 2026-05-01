@@ -13,7 +13,7 @@ app.use(express.json());
 app.use(express.static('../frontend'));
 
 // 🔌 CONEXIÓN MONGO
-mongoose.connect('mongodb://jesusadiel23_db_user:QDA9TnIHC8r1CalH@cluster0-shard-00-00.uaradlt.mongodb.net:27017,cluster0-shard-00-01.uaradlt.mongodb.net:27017,cluster0-shard-00-02.uaradlt.mongodb.net:27017/fiesta?ssl=true&replicaSet=atlas-uaradlt-shard-0&authSource=admin&retryWrites=true&w=majority')
+mongoose.connect(process.env.MONGO_URI)
 .then(() => console.log("✅ Mongo conectado"))
 .catch(err => console.log(err));
 
