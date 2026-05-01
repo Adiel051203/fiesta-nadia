@@ -7,6 +7,9 @@ const { v4: uuidv4 } = require('uuid');
 const Invitacion = require('./models/Invitacion');
 
 const app = express();
+app.get('/', (req, res) => {
+  res.send('🎉 Servidor funcionando correctamente 🚀');
+});
 
 app.use(cors());
 app.use(express.json());
