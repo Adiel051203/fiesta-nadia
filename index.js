@@ -2,17 +2,19 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const path = require('path');
+const QRCode = require('qrcode');
+const crypto = require('crypto');
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-// 🔥 CONEXIÓN A MONGO (RENDER)
+// 🔥 Mongo
 mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log("✅ Mongo conectado"))
-  .catch(err => console.log("❌ Error Mongo:", err));
+  .catch(err => console.log(err));
 
-// 🔥 MODELO
+// 🔥 Modelo
 const InvitacionSchema = new mongoose.Schema({
   codigo: String,
   mesa: Number,
@@ -27,30 +29,28 @@ const InvitacionSchema = new mongoose.Schema({
 
 const Invitacion = mongoose.model('Invitacion', InvitacionSchema);
 
-// 🔥 RUTA RAÍZ (para probar)
+// 🔥 Ruta raíz
 app.get('/', (req, res) => {
   res.send('🎉 Servidor funcionando correctamente 🚀');
 });
 
-// 🔥 SERVIR FRONTEND
+// 🔥 Servir frontend
 app.use(express.static(path.join(__dirname, 'frontend')));
 
-// 🔥 OBTENER INVITACIÓN
+// 🔥 Obtener invitación
 app.get('/invitacion', async (req, res) => {
   const { id } = req.query;
 
-  try {
-    const invitacion = await Invitacion.findOne({ codigo: id });
-    if (!invitacion) {
-      return res.json({ error: 'Invitación no encontrada' });
-    }
-    res.json(invitacion);
-  } catch (error) {
-    res.json({ error: 'Error del servidor' });
+  const invitacion = await Invitacion.findOne({ codigo: id });
+
+  if (!invitacion) {
+    return res.json({ error: 'No encontrada' });
   }
+
+  res.json(invitacion);
 });
 
-// 🔥 CONFIRMAR ASISTENCIA
+// 🔥 Confirmar + generar QR
 app.post('/confirmar', async (req, res) => {
   const { id, nombre } = req.body;
 
@@ -69,18 +69,50 @@ app.post('/confirmar', async (req, res) => {
 
     invitado.confirmado = true;
 
+    if (!invitado.codigoQR) {
+      invitado.codigoQR = crypto.randomUUID();
+    }
+
     await invitacion.save();
 
-    res.json({ mensaje: 'Confirmado correctamente' });
+    const urlQR = `https://fiesta-nadia.onrender.com/acceso.html?id=${invitado.codigoQR}`;
+
+    const qrImage = await QRCode.toDataURL(urlQR);
+
+    res.json({
+      mensaje: "Confirmado",
+      qr: qrImage
+    });
 
   } catch (error) {
-    res.json({ error: 'Error al confirmar' });
+    res.json({ error: "Error del servidor" });
   }
 });
 
-// 🔥 PUERTO (IMPORTANTE PARA RENDER)
+// 🔥 Validar acceso (para escaneo)
+app.get('/acceso', async (req, res) => {
+  const { id } = req.query;
+
+  const invitacion = await Invitacion.findOne({
+    "invitados.codigoQR": id
+  });
+
+  if (!invitacion) {
+    return res.send("❌ Acceso denegado");
+  }
+
+  const invitado = invitacion.invitados.find(i => i.codigoQR === id);
+
+  if (!invitado.confirmado) {
+    return res.send("❌ No confirmado");
+  }
+
+  res.send(`✅ Bienvenido ${invitado.nombre} - Mesa ${invitacion.mesa}`);
+});
+
+// 🔥 Puerto
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
-  console.log(`🚀 Servidor corriendo en puerto ${PORT}`);
+  console.log("🚀 Servidor corriendo");
 });

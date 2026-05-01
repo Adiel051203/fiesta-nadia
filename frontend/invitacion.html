@@ -1,184 +1,64 @@
 <!DOCTYPE html>
-<html lang="es">
+<html>
 <head>
-<meta charset="UTF-8">
-<title>Fiesta 50 Nadia</title>
-
-<style>
-body {
-  margin: 0;
-  font-family: 'Courier New', monospace;
-  background: black;
-  color: #fff;
-  text-align: center;
-  overflow-x: hidden;
-}
-
-/* 🔥 FONDO ANIMADO */
-body::before {
-  content: "";
-  position: fixed;
-  width: 200%;
-  height: 200%;
-  background: linear-gradient(45deg, #ff00cc, #3333ff, #00ffff, #ff00cc);
-  animation: neonBG 10s linear infinite;
-  z-index: -1;
-  opacity: 0.2;
-}
-
-@keyframes neonBG {
-  0% { transform: translate(0,0); }
-  50% { transform: translate(-25%, -25%); }
-  100% { transform: translate(0,0); }
-}
-
-/* 🎉 TÍTULO */
-h1 {
-  font-size: 3rem;
-  color: #ff00ff;
-  text-shadow: 0 0 20px #ff00ff;
-  margin-top: 40px;
-}
-
-/* ⏳ CONTADOR */
-#contador {
-  font-size: 2rem;
-  margin: 20px;
-  color: #00ffff;
-  text-shadow: 0 0 10px #00ffff;
-}
-
-/* 🪑 MESA */
-.mesa {
-  font-size: 1.5rem;
-  margin: 20px;
-}
-
-/* 👥 INVITADOS */
-.invitados {
-  margin: 20px auto;
-  width: 300px;
-}
-
-.invitado {
-  background: rgba(255,255,255,0.1);
-  padding: 10px;
-  margin: 5px;
-  border-radius: 10px;
-}
-
-/* 🔘 BOTÓN */
-button {
-  padding: 15px 30px;
-  font-size: 1.2rem;
-  background: #ff00ff;
-  border: none;
-  border-radius: 10px;
-  color: white;
-  cursor: pointer;
-  box-shadow: 0 0 15px #ff00ff;
-}
-
-button:hover {
-  background: #ff66ff;
-}
-
-/* ✅ CONFIRMADO */
-.confirmado {
-  color: #00ff00;
-  margin-top: 20px;
-}
-
-/* 🎟 QR */
-#qr {
-  margin-top: 20px;
-}
-</style>
+  <title>Invitación</title>
 </head>
+<body style="text-align:center; font-family: Arial;">
 
-<body>
+  <h1>🎉 Fiesta 50 de Nadia 🎉</h1>
+  <h2 id="mesa"></h2>
 
-<h1>🎉 Fiesta 50 de Nadia 🎉</h1>
+  <div id="invitados"></div>
 
-<div id="contador"></div>
+  <button onclick="confirmar()">Confirmar asistencia</button>
 
-<div class="mesa" id="mesa"></div>
-
-<div class="invitados" id="lista"></div>
-
-<button onclick="confirmar()">Confirmar asistencia</button>
-
-<div class="confirmado" id="estado"></div>
-
-<div id="qr"></div>
+  <div id="qr"></div>
 
 <script>
-const params = new URLSearchParams(window.location.search);
-const id = params.get("id");
+async function cargar() {
+  const params = new URLSearchParams(window.location.search);
+  const id = params.get("id");
 
-// 🎯 FECHA DEL EVENTO
-const fechaEvento = new Date("2026-08-22T20:00:00");
+  const res = await fetch(`/invitacion?id=${id}`);
+  const data = await res.json();
 
-// ⏳ CONTADOR
-function actualizarContador() {
-  const ahora = new Date();
-  let diff = fechaEvento - ahora;
+  document.getElementById("mesa").innerText = "Mesa " + data.mesa;
 
-  if (diff <= 0) {
-    document.getElementById("contador").innerText = "¡Es hoy! 🎉";
-    return;
-  }
-
-  let meses = Math.floor(diff / (1000 * 60 * 60 * 24 * 30));
-  diff -= meses * (1000 * 60 * 60 * 24 * 30);
-
-  let dias = Math.floor(diff / (1000 * 60 * 60 * 24));
-  diff -= dias * (1000 * 60 * 60 * 24);
-
-  let horas = Math.floor(diff / (1000 * 60 * 60));
-  diff -= horas * (1000 * 60 * 60);
-
-  let minutos = Math.floor(diff / (1000 * 60));
-
-  let texto = "";
-
-  if (meses > 0) texto += meses + " meses ";
-  if (dias > 0) texto += dias + " días ";
-  if (horas > 0) texto += horas + " horas ";
-  texto += minutos + " min";
-
-  document.getElementById("contador").innerText = texto;
-}
-
-setInterval(actualizarContador, 1000);
-
-// 📥 CARGAR DATOS
-fetch("/invitacion/" + id)
-.then(res => res.json())
-.then(data => {
-  document.getElementById("mesa").innerText = "🪑 Mesa " + data.mesa;
-
-  const lista = document.getElementById("lista");
-
+  let html = "";
   data.invitados.forEach(i => {
-    const div = document.createElement("div");
-    div.className = "invitado";
-    div.innerText = (i.confirmado ? "✔ " : "❌ ") + i.nombre;
-    lista.appendChild(div);
+    html += `<p>${i.nombre} ${i.confirmado ? "✔" : ""}</p>`;
   });
-});
 
-// ✅ CONFIRMAR
-function confirmar() {
-  fetch("/confirmar-todos/" + id, { method: "POST" })
-  .then(res => res.json())
-  .then(data => {
-    document.getElementById("estado").innerText = "✅ Confirmado";
-
-    document.getElementById("qr").innerHTML =
-      `<img src="${data.qr}" width="200">`;
-  });
+  document.getElementById("invitados").innerHTML = html;
 }
+
+async function confirmar() {
+  const params = new URLSearchParams(window.location.search);
+  const id = params.get("id");
+
+  const nombre = prompt("Escribe tu nombre EXACTO:");
+
+  const res = await fetch("/confirmar", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ id, nombre })
+  });
+
+  const data = await res.json();
+
+  if (data.qr) {
+    document.getElementById("qr").innerHTML = `
+      <h3>Tu código QR:</h3>
+      <img src="${data.qr}" width="200"/>
+    `;
+  } else {
+    alert(data.error);
+  }
+}
+
+cargar();
 </script>
 
 </body>

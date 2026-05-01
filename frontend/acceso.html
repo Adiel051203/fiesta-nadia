@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Acceso</title>
+</head>
+<body style="text-align:center; font-family: Arial;">
+
+<h1>Validando acceso...</h1>
+
+<script>
+async function validar() {
+  const params = new URLSearchParams(window.location.search);
+  const id = params.get("id");
+
+  const res = await fetch(`/acceso?id=${id}`);
+  const text = await res.text();
+
+  document.body.innerHTML = `<h1>${text}</h1>`;
+}
+
+validar();
+</script>
+
+</body>
+</html>
