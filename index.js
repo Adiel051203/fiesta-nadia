@@ -33,7 +33,7 @@ app.get('/', (req, res) => {
 });
 
 // 🔥 SERVIR FRONTEND
-app.use(express.static(path.join(__dirname, '../frontend')));
+app.use(express.static(path.join(__dirname, 'frontend')));
 
 // 🔥 OBTENER INVITACIÓN
 app.get('/invitacion', async (req, res) => {

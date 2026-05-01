@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Escáner</title>
+  <script src="https://unpkg.com/html5-qrcode"></script>
+</head>
+
+<body style="background:black;color:white;text-align:center">
+
+<h1>Escáner QR</h1>
+
+<div id="reader" style="width:300px;margin:auto;"></div>
+
+<div id="resultado"></div>
+
+<script>
+function onScanSuccess(decodedText) {
+  const url = new URL(decodedText);
+  const id = url.searchParams.get("id");
+
+  fetch(`http://192.168.100.102:3000/validar/${id}`)
+  .then(res => res.json())
+  .then(data => {
+    const div = document.getElementById("resultado");
+
+    if(data.acceso){
+      div.innerHTML = `✅ ${data.nombre} - Mesa ${data.mesa}`;
+      div.style.color = "lime";
+    } else {
+      div.innerHTML = `❌ ${data.mensaje}`;
+      div.style.color = "red";
+    }
+  });
+}
+
+const scanner = new Html5QrcodeScanner("reader", {
+  fps: 10,
+  qrbox: 250
+});
+
+scanner.render(onScanSuccess);
+</script>
+
+</body>
+</html>
