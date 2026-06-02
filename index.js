@@ -152,10 +152,15 @@ app.post('/confirmar', async (req, res) => {
       });
     }
 
-    const invitado =
-    invitacion.invitados.find(
-      i => i.nombre === nombre
-    );
+    const invitado = invitacion.invitados.find(
+i =>
+i.nombre
+.trim()
+.toLowerCase() ===
+nombre
+.trim()
+.toLowerCase()
+);
 
     if (!invitado) {
       return res.json({
@@ -179,10 +184,11 @@ app.post('/confirmar', async (req, res) => {
     const qr =
     await QRCode.toDataURL(urlQR);
 
-    res.json({
-      mensaje: 'Confirmado',
-      qr
-    });
+res.json({
+mensaje: "Confirmado",
+qr: qrImage,
+mesa: invitacion.mesa
+});
 
   } catch (error) {
 
