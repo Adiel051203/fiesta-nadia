@@ -230,6 +230,175 @@ transition:.3s;
 transform:scale(1.05);
 }
 
+/* INTRO PREMIUM */
+
+#intro{
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+text-align:center;
+padding:20px;
+position:relative;
+gap:30px;
+}
+
+.intro-card{
+backdrop-filter:blur(25px);
+background:
+rgba(255,255,255,.10);
+border:
+1px solid rgba(255,255,255,.2);
+padding:50px 35px;
+border-radius:35px;
+box-shadow:
+0 0 50px rgba(255,0,255,.25);
+max-width:700px;
+width:100%;
+animation:
+fadeUp 1.5s ease;
+}
+
+.retro-icons{
+font-size:2rem;
+margin-bottom:20px;
+animation:
+floatSoft 4s infinite ease-in-out;
+}
+
+.title{
+font-family:'Orbitron',sans-serif;
+font-size:2.2rem;
+line-height:1.5;
+text-align:center;
+color:#fff;
+text-shadow:
+0 0 10px #ff00ff,
+0 0 20px #00e5ff,
+0 0 40px #ff00ff;
+margin-bottom:10px;
+}
+
+.golden50{
+font-size:7rem;
+font-weight:bold;
+text-align:center;
+background:
+linear-gradient(
+45deg,
+#FFD700,
+#fff2a8,
+#ffcf40
+);
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+text-shadow:
+0 0 30px rgba(255,215,0,.5);
+line-height:1;
+}
+
+.subtitle-big{
+font-size:2rem;
+font-weight:bold;
+margin-bottom:15px;
+color:#ffe066;
+}
+
+.subtitle{
+font-size:1.1rem;
+opacity:.95;
+margin-bottom:30px;
+line-height:1.7;
+}
+
+.speaker-left,
+.speaker-right{
+font-size:6rem;
+animation:
+speakerBounce 2s infinite ease-in-out;
+filter:
+drop-shadow(0 0 20px #ff00ff);
+}
+
+.enter-btn{
+border:none;
+padding:20px 40px;
+border-radius:25px;
+font-size:1.1rem;
+cursor:pointer;
+background:
+linear-gradient(
+45deg,
+#ff00ff,
+#00e5ff
+);
+color:white;
+font-weight:bold;
+box-shadow:
+0 0 30px rgba(255,0,255,.5);
+transition:.4s;
+}
+
+.enter-btn:hover{
+transform:
+scale(1.08);
+}
+
+@keyframes speakerBounce{
+0%,100%{
+transform:
+translateY(0);
+}
+50%{
+transform:
+translateY(-10px);
+}
+}
+
+@keyframes fadeUp{
+from{
+opacity:0;
+transform:
+translateY(40px);
+}
+to{
+opacity:1;
+transform:
+translateY(0);
+}
+}
+
+@keyframes floatSoft{
+0%,100%{
+transform:
+translateY(0);
+}
+50%{
+transform:
+translateY(-8px);
+}
+}
+
+@media(max-width:768px){
+
+#intro{
+flex-direction:column;
+}
+
+.speaker-left,
+.speaker-right{
+font-size:4rem;
+}
+
+.title{
+font-size:1.7rem;
+}
+
+.golden50{
+font-size:5rem;
+}
+
+}
 /* CONTENIDO */
 
 #contenido{
@@ -335,14 +504,44 @@ margin-top:20px;
 
 <div id="intro">
 
+<div class="speaker-left">
+📻
+</div>
+
 <div class="intro-card">
 
+<div class="retro-icons">
+☎️ 📼 💿 🧩 ✨
+</div>
+
 <div class="title">
-✨ Ven a festejar conmigo ✨ 
+✨ Bienvenidos al festejo de Nadia ✨
 </div>
 
 <div class="golden50">
 50
+</div>
+
+<div class="subtitle-big">
+Años
+</div>
+
+<p class="subtitle">
+🎶 Una noche inolvidable inspirada en los 80s & 90s 🎶
+</p>
+
+<button
+class="enter-btn"
+id="enterBtn">
+
+▶ Entrar a la experiencia
+
+</button>
+
+</div>
+
+<div class="speaker-right">
+📻
 </div>
 
 <p class="subtitle">
