@@ -139,6 +139,11 @@ app.post('/confirmar', async (req, res) => {
 
     const { id, nombre } =
     req.body;
+    if (!nombre) {
+  return res.json({
+    error: "Escribe un nombre"
+  });
+}
 
     const invitacion =
     await Invitacion.findOne({
@@ -152,15 +157,18 @@ app.post('/confirmar', async (req, res) => {
       });
     }
 
-    const invitado = invitacion.invitados.find(
-i =>
-i.nombre
-.trim()
-.toLowerCase() ===
-nombre
-.trim()
-.toLowerCase()
-);
+   const invitado = invitacion.invitados.find(i => {
+
+  if (!i.nombre) return false;
+
+  return i.nombre
+    .toLowerCase()
+    .trim() ===
+    nombre
+    .toLowerCase()
+    .trim();
+
+});
 
     if (!invitado) {
       return res.json({
