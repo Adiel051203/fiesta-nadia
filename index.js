@@ -187,15 +187,15 @@ app.post('/confirmar', async (req, res) => {
     await invitacion.save();
 
     const urlQR =
-`https://fiesta-nadia.onrender.com/acceso.html?id=${invitado.codigoQR}`;
+`https://fiesta-nadia.onrender.com/acceso?id=${invitado.codigoQR}`;
 
-    const qr =
-    await QRCode.toDataURL(urlQR);
+const qrImage =
+await QRCode.toDataURL(urlQR);
 
 res.json({
-mensaje: "Confirmado",
-qr: qrImage,
-mesa: invitacion.mesa
+  mensaje: "Confirmado",
+  qr: qrImage,
+  mesa: invitacion.mesa
 });
 
   } catch (error) {
