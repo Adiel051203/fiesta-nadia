@@ -1,6 +1,24 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+  <meta property="og:title"
+content="🎉 Fiesta 50 de Nadia">
+
+<meta property="og:description"
+content="✨ Una noche inolvidable inspirada en los 80s & 90s ✨
+15 de Agosto • 7:00 PM">
+
+<meta property="og:image"
+content="https://fiesta-nadia.onrender.com/assets/preview.jpg">
+
+<meta property="og:url"
+content="https://fiesta-nadia.onrender.com/invitacion.html">
+
+<meta property="og:type"
+content="website">
+
+<meta name="twitter:card"
+content="summary_large_image">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -9,6 +27,108 @@
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
 <style>
+  /* OBJETOS RETRO */
+
+.floating-item{
+position:absolute;
+z-index:0;
+animation:
+floatRetro 6s ease-in-out infinite;
+filter:
+drop-shadow(0 0 15px rgba(255,255,255,.3));
+opacity:.9;
+}
+
+.cassette{
+top:15%;
+left:8%;
+font-size:4rem;
+animation-delay:0s;
+}
+
+.rubik{
+bottom:15%;
+left:10%;
+font-size:4rem;
+animation-delay:1s;
+}
+
+.phone{
+top:18%;
+right:10%;
+font-size:4rem;
+animation-delay:2s;
+}
+
+.cd1{
+bottom:12%;
+right:8%;
+font-size:4rem;
+animation:
+spinCD 8s linear infinite;
+}
+
+.cd2{
+top:40%;
+left:18%;
+font-size:3rem;
+animation:
+spinCD 10s linear infinite;
+}
+
+.music1{
+top:25%;
+left:28%;
+font-size:2rem;
+animation-delay:1s;
+}
+
+.music2{
+bottom:25%;
+right:28%;
+font-size:2rem;
+animation-delay:3s;
+}
+
+@keyframes floatRetro{
+0%,100%{
+transform:
+translateY(0px);
+}
+
+50%{
+transform:
+translateY(-12px);
+}
+}
+
+@keyframes spinCD{
+from{
+transform:
+rotate(0deg);
+}
+to{
+transform:
+rotate(360deg);
+}
+}
+
+@media(max-width:768px){
+
+.cassette,
+.rubik,
+.phone,
+.cd1,
+.cd2{
+font-size:2.7rem;
+}
+
+.music1,
+.music2{
+font-size:1.5rem;
+}
+
+}
 
 *{
 margin:0;
@@ -422,6 +542,33 @@ margin-top:20px;
 </div>
 
 <div id="intro">
+  <div class="floating-item cassette">
+📼
+</div>
+
+<div class="floating-item rubik">
+🧩
+</div>
+
+<div class="floating-item phone">
+☎️
+</div>
+
+<div class="floating-item cd1">
+💿
+</div>
+
+<div class="floating-item cd2">
+💿
+</div>
+
+<div class="floating-item music1">
+🎵
+</div>
+
+<div class="floating-item music2">
+🎶
+</div>
 
 <div class="speaker-left">
 📻
@@ -461,21 +608,6 @@ id="enterBtn">
 
 <div class="speaker-right">
 📻
-</div>
-
-<p class="subtitle">
-Una noche inolvidable
-80s & 90s
-</p>
-
-<button
-class="enter-btn"
-id="enterBtn">
-
-▶ Entrar a la experiencia
-
-</button>
-
 </div>
 
 </div>
