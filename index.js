@@ -4,6 +4,8 @@ const cors = require('cors');
 const path = require('path');
 const QRCode = require('qrcode');
 const crypto = require('crypto');
+const { v4: uuidv4 } = require('uuid');
+const { type } = require('os');
 
 const app = express();
 
@@ -25,6 +27,10 @@ mongoose.connect(process.env.MONGO_URI)
 const InvitacionSchema = new mongoose.Schema({
   codigo: String,
   mesa: Number,
+  maxLugares: {
+    type: Number,
+    default: 2
+  },
 invitados: [
 {
 nombre: String,
@@ -321,7 +327,71 @@ app.get('/pase-data', async (req, res) => {
   });
 
 });
+// ============================
+// ADMIN: CREAR INVITADO
+// ============================
 
+app.post('/admin/crear-invitado', async (req, res) => {
+  try {
+    const { nombre, mesa, maxLugares } = req.body;
+
+    if (!nombre || !mesa) {
+      return res.json({
+        error: 'Falta nombre o mesa'
+      });
+    }
+
+    const codigo = uuidv4();
+
+    const nuevaInvitacion = new Invitacion({
+      codigo,
+      mesa: Number(mesa),
+      invitados: [
+        {
+          nombre: nombre.trim(),
+          telefono: "",
+          asistentes: 1,
+          confirmado: false,
+          codigoQR: ""
+        }
+      ],
+      maxLugares: Number(maxLugares) || 2
+    });
+
+    await nuevaInvitacion.save();
+
+    res.json({
+      mensaje: 'Invitado creado',
+      codigo,
+      link: `https://fiesta-nadia.onrender.com/invitacion.html?id=${codigo}`
+    });
+
+  } catch (error) {
+    console.log(error);
+    res.json({
+      error: 'Error al crear invitado'
+    });
+  }
+});
+
+
+// ============================
+// ADMIN: VER INVITADOS
+// ============================
+
+app.get('/admin/invitados', async (req, res) => {
+  try {
+    const invitaciones = await Invitacion.find();
+
+    res.json(invitaciones);
+
+  } catch (error) {
+    console.log(error);
+    res.json({
+      error: 'Error al obtener invitados'
+    });
+  }
+});
 app.listen(PORT, () => {
   console.log(
     `🚀 Servidor corriendo en puerto ${PORT}`
