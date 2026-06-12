@@ -216,7 +216,7 @@ res.json({
   mensaje: "Confirmado",
   qr: qrImage,
   mesa: invitacion.mesa,
-  asistente: invitado.asistentes,
+  asistente: invitado.asistentes || 1,
   codigoQR: invitado.codigoQR
 });
 
@@ -316,7 +316,7 @@ app.get('/pase-data', async (req, res) => {
   res.json({
     nombre: invitado.nombre,
     mesa: invitacion.mesa,
-    asistentes: invitado.asistentes,
+    asistentes: invitado.asistentes || 1,
     qr: qrImage
   });
 
