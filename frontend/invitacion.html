@@ -684,9 +684,26 @@ font-weight:bold;
 </h2>
 
 <img
-id="qrImage"
-src="">
+id="qrImage"src="">
+<br><br>
 
+<button
+id="whatsappBtn"
+style="
+display:none;
+padding:15px 25px;
+border:none;
+border-radius:20px;
+cursor:pointer;
+font-size:1rem;
+background:#25D366;
+color:white;
+font-weight:bold;
+">
+
+📲 Enviar QR por WhatsApp
+
+</button>
 </div>
 
 </div>
@@ -948,7 +965,37 @@ document
 )
 .src =
 data.qr;
+const whatsappBtn =
+document.getElementById(
+'whatsappBtn'
+);
 
+whatsappBtn.style.display =
+'inline-block';
+
+whatsappBtn.onclick = () => {
+
+const mensaje =
+encodeURIComponent(
+
+`🎉 ¡Confirmé mi asistencia al festejo de Nadia!
+
+🪑 Mesa: ${data.mesa}
+👥 Asistentes: ${data.asistentes}
+
+🎟 Mi código de acceso:
+https://fiesta-nadia.onrender.com/acceso?id=${data.codigoQR}
+
+Nos vemos el 15 de agosto 💜`
+
+);
+
+window.open(
+`https://wa.me/?text=${mensaje}`,
+'_blank'
+);
+
+};
 alert(
 '🎟 ¡Tu acceso está listo!\n\nGuarda este QR, será necesario para entrar al evento.'
 );

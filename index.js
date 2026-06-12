@@ -215,7 +215,9 @@ await QRCode.toDataURL(urlQR);
 res.json({
   mensaje: "Confirmado",
   qr: qrImage,
-  mesa: invitacion.mesa
+  mesa: invitacion.mesa,
+  asistente: invitado.asistentes,
+  codigoQR: invitado.codigoQR
 });
 
   } catch (error) {
