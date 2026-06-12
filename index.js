@@ -286,7 +286,47 @@ ${invitado.asistentes}
 
 const PORT =
 process.env.PORT || 3000;
+// 🔥 Datos del pase
 
+app.get('/pase-data', async (req, res) => {
+
+  const { id } = req.query;
+
+  const invitacion = await Invitacion.findOne({
+    "invitados.codigoQR": id
+  });
+
+  if (!invitacion) {
+    return res.json({
+      error: "Invitación no encontrada"
+    });
+  }
+
+  const invitado =
+  invitacion.invitados.find(
+    i => i.codigoQR === id
+  );
+
+  const urlQR =
+  `https://fiesta-nadia.onrender.com/acceso?id=${id}`;
+
+  const qrImage =
+  await QRCode.toDataURL(urlQR);
+
+  res.json({
+    nombre: invitado.nombre,
+    mesa: invitacion.mesa,
+    asistentes: invitado.asistentes,
+    qr: qrImage
+  });
+
+});
+
+app.listen(PORT, () => {
+  console.log(
+    `🚀 Servidor corriendo en puerto ${PORT}`
+  );
+});
 app.listen(PORT, () => {
   console.log(
     `🚀 Servidor corriendo en puerto ${PORT}`

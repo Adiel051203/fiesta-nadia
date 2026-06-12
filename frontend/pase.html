@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Pase VIP Nadia 50</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
+
+body{
+  min-height:100vh;
+  font-family:'Poppins',sans-serif;
+  background:linear-gradient(180deg,#12001d,#240046,#10002b);
+  color:white;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  padding:20px;
+  overflow-x:hidden;
+}
+
+body::before{
+  content:'';
+  position:fixed;
+  width:300px;
+  height:300px;
+  border-radius:50%;
+  background:linear-gradient(to bottom,#ff4d6d,#ffb3c1);
+  bottom:80px;
+  left:50%;
+  transform:translateX(-50%);
+  box-shadow:0 0 80px #ff4d6d;
+  z-index:-2;
+}
+
+.pass-card{
+  width:100%;
+  max-width:430px;
+  background:rgba(255,255,255,.10);
+  backdrop-filter:blur(22px);
+  border:1px solid rgba(255,255,255,.22);
+  border-radius:30px;
+  padding:30px 22px;
+  text-align:center;
+  box-shadow:0 0 45px rgba(255,0,255,.28);
+  position:relative;
+}
+
+.retro-icons{
+  font-size:1.8rem;
+  margin-bottom:12px;
+}
+
+.title{
+  font-family:'Orbitron',sans-serif;
+  font-size:1.7rem;
+  text-shadow:0 0 12px #ff00ff,0 0 25px #00e5ff;
+  margin-bottom:8px;
+}
+
+.gold{
+  font-family:'Orbitron',sans-serif;
+  font-size:3rem;
+  background:linear-gradient(45deg,gold,#fff2a8,#ffcf40);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  margin-bottom:10px;
+}
+
+.info{
+  margin:18px 0;
+  line-height:1.8;
+  font-size:1.1rem;
+}
+
+.qr-box{
+  background:white;
+  padding:15px;
+  border-radius:22px;
+  margin:20px auto;
+  width:260px;
+  box-shadow:0 0 30px rgba(0,229,255,.4);
+}
+
+.qr-box img{
+  width:100%;
+  display:block;
+}
+
+.note{
+  font-size:.95rem;
+  opacity:.9;
+  margin-top:10px;
+}
+
+.btn{
+  display:block;
+  width:100%;
+  margin-top:14px;
+  padding:15px;
+  border-radius:20px;
+  border:none;
+  text-decoration:none;
+  font-weight:bold;
+  color:white;
+  cursor:pointer;
+  background:linear-gradient(45deg,#ff00ff,#00e5ff);
+  box-shadow:0 0 20px rgba(255,0,255,.35);
+}
+
+.whatsapp{
+  background:#25D366;
+  box-shadow:0 0 20px rgba(37,211,102,.35);
+}
+
+.loading{
+  font-size:1.2rem;
+}
+</style>
+</head>
+
+<body>
+
+<div class="pass-card" id="pass">
+  <div class="loading">Cargando pase VIP...</div>
+</div>
+
+<script>
+const params = new URLSearchParams(window.location.search);
+const id = params.get('id');
+
+async function cargarPase(){
+  const contenedor = document.getElementById('pass');
+
+  try{
+    const res = await fetch(`/pase-data?id=${id}`);
+    const data = await res.json();
+
+    if(data.error){
+      contenedor.innerHTML = `
+        <h2>❌ Pase no encontrado</h2>
+        <p>Verifica tu enlace.</p>
+      `;
+      return;
+    }
+
+    const paseUrl =
+    `https://fiesta-nadia.onrender.com/pase.html?id=${id}`;
+
+    const mensaje = encodeURIComponent(
+`🎉 Este es mi pase VIP para el festejo de Nadia 50 ✨
+
+🪑 Mesa: ${data.mesa}
+👥 Asistentes: ${data.asistentes}
+
+🎟 Abre aquí mi pase con QR:
+${paseUrl}
+
+Nos vemos el 15 de agosto 💜`
+    );
+
+    contenedor.innerHTML = `
+      <div class="retro-icons">📼 💿 🧩 📻 ✨</div>
+
+      <div class="title">PASE VIP</div>
+      <div class="gold">NADIA 50</div>
+
+      <div class="info">
+        <strong>${data.nombre}</strong><br>
+        🪑 Mesa ${data.mesa}<br>
+        👥 ${data.asistentes} asistente(s)
+      </div>
+
+      <div class="qr-box">
+        <img src="${data.qr}" alt="QR de acceso">
+      </div>
+
+      <p class="note">
+        Presenta este código QR en la entrada del evento.
+      </p>
+
+      <a class="btn whatsapp" href="https://wa.me/?text=${mensaje}" target="_blank">
+        📲 Compartir pase por WhatsApp
+      </a>
+
+      <a class="btn" href="https://maps.app.goo.gl/HiwRRxf6YJnE4Y8E7" target="_blank">
+        📍 Ver lugar del festejo
+      </a>
+    `;
+
+  }catch(error){
+    contenedor.innerHTML = `
+      <h2>❌ Error al cargar el pase</h2>
+    `;
+  }
+}
+
+cargarPase();
+</script>
+
+</body>
+</html>
