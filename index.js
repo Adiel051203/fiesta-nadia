@@ -25,16 +25,28 @@ mongoose.connect(process.env.MONGO_URI)
 const InvitacionSchema = new mongoose.Schema({
   codigo: String,
   mesa: Number,
-  invitados: [
-    {
-      nombre: String,
-      confirmado: {
-        type: Boolean,
-        default: false
-      },
-      codigoQR: String
-    }
-  ]
+invitados: [
+{
+nombre: String,
+
+telefono: {
+type: String,
+default: ""
+},
+
+asistentes: {
+type: Number,
+default: 1
+},
+
+confirmado: {
+type: Boolean,
+default: false
+},
+
+codigoQR: String
+}
+]
 });
 
 const Invitacion =
@@ -137,8 +149,12 @@ app.post('/confirmar', async (req, res) => {
 
   try {
 
-    const { id, nombre } =
-    req.body;
+const {
+id,
+nombre,
+telefono,
+asistentes
+} = req.body;
     if (!nombre) {
   return res.json({
     error: "Escribe un nombre"
@@ -176,7 +192,11 @@ app.post('/confirmar', async (req, res) => {
         'Invitado no encontrado'
       });
     }
+invitado.telefono =
+telefono || "";
 
+invitado.asistentes =
+Number(asistentes) || 1;
     invitado.confirmado = true;
 
     if (!invitado.codigoQR) {
@@ -241,9 +261,20 @@ app.get('/acceso', async (req, res) => {
     );
   }
 
-  res.send(
-`✅ Bienvenido ${invitado.nombre} - Mesa ${invitacion.mesa}`
-  );
+  res.send(`
+<h1>
+✅ Bienvenido ${invitado.nombre}
+</h1>
+
+<h2>
+🪑 Mesa ${invitacion.mesa}
+</h2>
+
+<h3>
+👥 Personas:
+${invitado.asistentes}
+</h3>
+`);
 
 });
 
