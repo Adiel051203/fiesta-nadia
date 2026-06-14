@@ -67,6 +67,7 @@ a{color:#00e5ff;}
 <th>Teléfono</th>
 <th>Asistentes</th>
 <th>Link</th>
+<th>Editar</th>
 </tr>
 </thead>
 <tbody id="tabla"></tbody>
@@ -117,12 +118,58 @@ async function cargarInvitados(){
         <td>${persona.telefono || '-'}</td>
         <td>${persona.asistentes || 1}</td>
         <td><a href="${link}" target="_blank">Abrir</a></td>
+        <td>
+  <button onclick="editarInvitado('${inv.codigo}', '${persona.nombre}', '${inv.mesa}', '${persona.telefono || ""}', '${persona.asistentes || 1}', '${persona.acompanante || ""}', '${persona.mesaAcompanante || inv.mesa}')">
+    Editar
+  </button>
+</td>
       </tr>
       `;
     });
   });
 }
+async function editarInvitado(codigo, nombre, mesa, telefono, asistentes, acompanante, mesaAcompanante){
 
+  const nuevoNombre = prompt("Nombre:", nombre);
+  if(!nuevoNombre) return;
+
+  const nuevaMesa = prompt("Mesa principal:", mesa);
+  if(!nuevaMesa) return;
+
+  const nuevoTelefono = prompt("Teléfono:", telefono);
+
+  const nuevosAsistentes = prompt("Asistentes:", asistentes);
+
+  const nuevoAcompanante = prompt("Acompañante:", acompanante);
+
+  const nuevaMesaAcompanante = prompt("Mesa acompañante:", mesaAcompanante);
+
+  const res = await fetch('/admin/editar-invitado',{
+    method:'PUT',
+    headers:{
+      'Content-Type':'application/json'
+    },
+    body:JSON.stringify({
+      codigo,
+      nombre:nuevoNombre,
+      mesa:nuevaMesa,
+      telefono:nuevoTelefono,
+      asistentes:nuevosAsistentes,
+      acompanante:nuevoAcompanante,
+      mesaAcompanante:nuevaMesaAcompanante
+    })
+  });
+
+  const data = await res.json();
+
+  if(data.error){
+    alert(data.error);
+    return;
+  }
+
+  alert("✅ Invitado actualizado");
+  cargarInvitados();
+}
 cargarInvitados();
 </script>
 
