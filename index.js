@@ -347,7 +347,7 @@ app.get('/pase-data', async (req, res) => {
     mesa: invitacion.mesa,
     asistentes: invitado.asistentes || 1,
     acompanante: invitado.acompanante || "",
-mesaAcompanante: invitado.mesaAcompanante || invitacion.mesa
+mesaAcompanante: invitado.mesaAcompanante || invitacion.mesa,
     qr: qrImage
   });
 
