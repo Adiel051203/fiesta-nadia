@@ -63,6 +63,8 @@ a{color:#00e5ff;}
 <tr>
 <th>Nombre</th>
 <th>Mesa</th>
+<th>Acompañante</th>
+<th>Mesa acompañante</th>
 <th>Confirmado</th>
 <th>Teléfono</th>
 <th>Asistentes</th>
@@ -112,12 +114,14 @@ async function cargarInvitados(){
 
       tabla.innerHTML += `
       <tr>
-        <td>${persona.nombre}</td>
-        <td>${inv.mesa}</td>
-        <td>${persona.confirmado ? '✅ Sí' : '❌ No'}</td>
-        <td>${persona.telefono || '-'}</td>
-        <td>${persona.asistentes || 1}</td>
-        <td><a href="${link}" target="_blank">Abrir</a></td>
+       <td>${persona.nombre}</td>
+<td>${inv.mesa}</td>
+<td>${persona.acompanante || '-'}</td>
+<td>${persona.mesaAcompanante || '-'}</td>
+<td>${persona.confirmado ? '✅ Sí' : '❌ No'}</td>
+<td>${persona.telefono || '-'}</td>
+<td>${persona.asistentes || 1}</td>
+<td><a href="${link}" target="_blank">Abrir</a></td>
         <td>
   <button onclick="editarInvitado('${inv.codigo}', '${persona.nombre}', '${inv.mesa}', '${persona.telefono || ""}', '${persona.asistentes || 1}', '${persona.acompanante || ""}', '${persona.mesaAcompanante || inv.mesa}')">
     Editar
