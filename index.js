@@ -346,6 +346,8 @@ app.get('/pase-data', async (req, res) => {
     nombre: invitado.nombre,
     mesa: invitacion.mesa,
     asistentes: invitado.asistentes || 1,
+    acompanante: invitado.acompanante || "",
+mesaAcompanante: invitado.mesaAcompanante || invitacion.mesa
     qr: qrImage
   });
 
@@ -412,6 +414,54 @@ app.get('/admin/invitados', async (req, res) => {
     console.log(error);
     res.json({
       error: 'Error al obtener invitados'
+    });
+  }
+});
+// ============================
+// ADMIN: EDITAR INVITADO
+// ============================
+
+app.put('/admin/editar-invitado', async (req, res) => {
+  try {
+    const {
+      codigo,
+      nombre,
+      mesa,
+      telefono,
+      asistentes,
+      acompanante,
+      mesaAcompanante
+    } = req.body;
+
+    const invitacion = await Invitacion.findOne({ codigo });
+
+    if (!invitacion) {
+      return res.json({
+        error: 'Invitación no encontrada'
+      });
+    }
+
+    invitacion.mesa = Number(mesa) || invitacion.mesa;
+
+    const invitado = invitacion.invitados[0];
+
+    invitado.nombre = nombre || invitado.nombre;
+    invitado.telefono = telefono || "";
+    invitado.asistentes = Number(asistentes) || 1;
+    invitado.acompanante = acompanante || "";
+    invitado.mesaAcompanante =
+      mesaAcompanante ? Number(mesaAcompanante) : invitacion.mesa;
+
+    await invitacion.save();
+
+    res.json({
+      mensaje: 'Invitado actualizado correctamente'
+    });
+
+  } catch (error) {
+    console.log(error);
+    res.json({
+      error: 'Error al editar invitado'
     });
   }
 });
