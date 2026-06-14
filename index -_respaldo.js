@@ -35,11 +35,6 @@ invitados: [
 {
 nombre: String,
 
-
-acompanante: {
-  type: String,
-  default: ""
-},
 telefono: {
 type: String,
 default: ""
@@ -164,8 +159,7 @@ const {
 id,
 nombre,
 telefono,
-asistentes,
-acompanante
+asistentes
 } = req.body;
     if (!nombre) {
   return res.json({
@@ -209,9 +203,6 @@ telefono || "";
 
 invitado.asistentes =
 Number(asistentes) || 1;
-if (Number(asistentes) === 2 && acompanante) {
-  invitado.acompanante = acompanante.trim();
-}
     invitado.confirmado = true;
 
     if (!invitado.codigoQR) {

@@ -893,19 +893,6 @@ const asistentes =
 prompt(
 '👥 ¿Cuántos asistirán?\n\nEscribe 1 o 2'
 );
-let acompanante = "";
-
-if(asistentes === "2"){
-  acompanante =
-  prompt(
-    '👤 Ingresa el nombre de tu acompañante'
-  );
-
-  if(!acompanante){
-    alert('Debes ingresar el nombre del acompañante');
-    return;
-  }
-}
 
 if(
 asistentes !== '1' &&
@@ -942,8 +929,7 @@ body:JSON.stringify({
 id,
 nombre,
 telefono,
-asistentes,
-acompanante
+asistentes
 })
 
 }

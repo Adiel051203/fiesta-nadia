@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Invitados</title>
+<style>
+body{
+  font-family:Arial;
+  background:#12001d;
+  color:white;
+  padding:20px;
+}
+.card{
+  max-width:900px;
+  margin:auto;
+  background:rgba(255,255,255,.1);
+  padding:25px;
+  border-radius:20px;
+}
+input,button{
+  width:100%;
+  padding:12px;
+  margin:8px 0;
+  border-radius:10px;
+  border:none;
+}
+button{
+  background:#ff00ff;
+  color:white;
+  font-weight:bold;
+  cursor:pointer;
+}
+table{
+  width:100%;
+  margin-top:20px;
+  border-collapse:collapse;
+}
+td,th{
+  border:1px solid #ffffff44;
+  padding:10px;
+  font-size:14px;
+}
+a{color:#00e5ff;}
+</style>
+</head>
+<body>
+
+<div class="card">
+<h1>Panel de Invitados</h1>
+
+<input id="nombre" placeholder="Nombre del invitado">
+<input id="mesa" placeholder="Mesa">
+<input id="maxLugares" placeholder="Máximo lugares" value="2">
+
+<button onclick="crearInvitado()">Crear invitación</button>
+
+<p id="resultado"></p>
+
+<h2>Invitados registrados</h2>
+<table>
+<thead>
+<tr>
+<th>Nombre</th>
+<th>Mesa</th>
+<th>Confirmado</th>
+<th>Teléfono</th>
+<th>Asistentes</th>
+<th>Link</th>
+</tr>
+</thead>
+<tbody id="tabla"></tbody>
+</table>
+</div>
+
+<script>
+async function crearInvitado(){
+  const nombre = document.getElementById('nombre').value;
+  const mesa = document.getElementById('mesa').value;
+  const maxLugares = document.getElementById('maxLugares').value;
+
+  const res = await fetch('/admin/crear-invitado',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({nombre,mesa,maxLugares})
+  });
+
+  const data = await res.json();
+
+  if(data.error){
+    alert(data.error);
+    return;
+  }
+
+  document.getElementById('resultado').innerHTML =
+  `✅ Invitación creada:<br><a href="${data.link}" target="_blank">${data.link}</a>`;
+
+  cargarInvitados();
+}
+
+async function cargarInvitados(){
+  const res = await fetch('/admin/invitados');
+  const data = await res.json();
+
+  const tabla = document.getElementById('tabla');
+  tabla.innerHTML = '';
+
+  data.forEach(inv => {
+    inv.invitados.forEach(persona => {
+      const link = `https://fiesta-nadia.onrender.com/invitacion.html?id=${inv.codigo}`;
+
+      tabla.innerHTML += `
+      <tr>
+        <td>${persona.nombre}</td>
+        <td>${inv.mesa}</td>
+        <td>${persona.confirmado ? '✅ Sí' : '❌ No'}</td>
+        <td>${persona.telefono || '-'}</td>
+        <td>${persona.asistentes || 1}</td>
+        <td><a href="${link}" target="_blank">Abrir</a></td>
+      </tr>
+      `;
+    });
+  });
+}
+
+cargarInvitados();
+</script>
+
+</body>
+</html>
