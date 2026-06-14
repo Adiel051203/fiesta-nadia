@@ -40,6 +40,10 @@ acompanante: {
   type: String,
   default: ""
 },
+mesaAcompanante: {
+  type: Number,
+  default: null
+},
 telefono: {
 type: String,
 default: ""
@@ -211,6 +215,7 @@ invitado.asistentes =
 Number(asistentes) || 1;
 if (Number(asistentes) === 2 && acompanante) {
   invitado.acompanante = acompanante.trim();
+  invitado.mesaAcompanante = invitacion.mesa;
 }
     invitado.confirmado = true;
 
@@ -279,19 +284,27 @@ app.get('/acceso', async (req, res) => {
   }
 
   res.send(`
-<h1>
-✅ Bienvenido ${invitado.nombre}
-</h1>
+<h1>✅ Acceso válido</h1>
 
-<h2>
-🪑 Mesa ${invitacion.mesa}
-</h2>
+<h2>Personas registradas</h2>
 
-<h3>
-👥 Personas:
-${invitado.asistentes}
-</h3>
-${invitado.acompanante ? `<h3>👤 Acompañante: ${invitado.acompanante}</h3>` : ""}
+<div style="font-size:22px; margin:15px;">
+  <strong>${invitado.nombre}</strong><br>
+  🪑 Mesa ${invitacion.mesa}
+</div>
+
+${
+  invitado.acompanante
+    ? `
+    <div style="font-size:22px; margin:15px;">
+      <strong>${invitado.acompanante}</strong><br>
+      🪑 Mesa ${invitado.mesaAcompanante || invitacion.mesa}
+    </div>
+    `
+    : ""
+}
+
+<h3>👥 Total de personas: ${invitado.asistentes}</h3>
 `);
 
 });
