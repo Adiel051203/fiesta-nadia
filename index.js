@@ -291,6 +291,7 @@ app.get('/acceso', async (req, res) => {
 👥 Personas:
 ${invitado.asistentes}
 </h3>
+${invitado.acompanante ? `<h3>👤 Acompañante: ${invitado.acompanante}</h3>` : ""}
 `);
 
 });
