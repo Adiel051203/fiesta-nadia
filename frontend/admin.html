@@ -178,7 +178,7 @@ async function cargarInvitados(){
   </button>
 </td>
 <td>
-  <button onclick="eliminarInvitado('${inv.codigo}')">
+  <button onclick="window.eliminarInvitado('${inv.codigo}')">
     Eliminar
   </button>
 </td>
@@ -219,7 +219,6 @@ async function editarInvitado(codigo, nombre, mesa, telefono, asistentes, acompa
     })
   });
 
-  
   const data = await res.json();
 
   if(data.error){
@@ -228,7 +227,10 @@ async function editarInvitado(codigo, nombre, mesa, telefono, asistentes, acompa
   }
 
   alert("✅ Invitado actualizado");
-  async function eliminarInvitado(codigo){
+  cargarInvitados();
+}
+
+window.eliminarInvitado = async function(codigo){
 
   const confirmar =
   confirm('¿Seguro que quieres eliminar esta invitación?');
@@ -251,9 +253,8 @@ async function editarInvitado(codigo, nombre, mesa, telefono, asistentes, acompa
   alert('✅ Invitación eliminada');
   cargarInvitados();
 }
-  cargarInvitados();
-}
-</script>
 
+cargarInvitados();
+</script>
 </body>
 </html>
