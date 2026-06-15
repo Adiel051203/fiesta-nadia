@@ -54,6 +54,21 @@ a{color:#00e5ff;}
 <input id="maxLugares" placeholder="Máximo lugares" value="2">
 
 <button onclick="crearInvitado()">Crear invitación</button>
+<hr>
+
+<h2>Importar invitados desde Excel</h2>
+
+<input
+type="file"
+id="archivoExcel"
+accept=".xlsx,.xls"
+>
+
+<button onclick="importarExcel()">
+📥 Importar Excel
+</button>
+
+<p id="resultadoExcel"></p>
 
 <p id="resultado"></p>
 
@@ -97,7 +112,38 @@ async function crearInvitado(){
 
   document.getElementById('resultado').innerHTML =
   `✅ Invitación creada:<br><a href="${data.link}" target="_blank">${data.link}</a>`;
+async function importarExcel(){
 
+  const archivo =
+  document.getElementById('archivoExcel').files[0];
+
+  if(!archivo){
+    alert('Selecciona un archivo Excel');
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append('archivo', archivo);
+
+  const res =
+  await fetch('/admin/importar-excel',{
+    method:'POST',
+    body:formData
+  });
+
+  const data =
+  await res.json();
+
+  if(data.error){
+    alert(data.error);
+    return;
+  }
+
+  document.getElementById('resultadoExcel').innerText =
+  data.mensaje;
+
+  cargarInvitados();
+}
   cargarInvitados();
 }
 

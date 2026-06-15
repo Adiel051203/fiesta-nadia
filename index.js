@@ -1,3 +1,5 @@
+const multer = require('multer');
+const XLSX = require('xlsx');
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
@@ -8,6 +10,7 @@ const { v4: uuidv4 } = require('uuid');
 const { type } = require('os');
 
 const app = express();
+const upload = multer({ dest: 'uploads/' });
 
 app.use(cors());
 app.use(express.json());
@@ -465,10 +468,69 @@ app.put('/admin/editar-invitado', async (req, res) => {
     });
   }
 });
-app.listen(PORT, () => {
-  console.log(
-    `🚀 Servidor corriendo en puerto ${PORT}`
-  );
+// ============================
+// ADMIN: IMPORTAR EXCEL
+// ============================
+
+app.post('/admin/importar-excel', upload.single('archivo'), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.json({
+        error: 'No se subió ningún archivo'
+      });
+    }
+
+    const workbook = XLSX.readFile(req.file.path);
+    const sheetName = workbook.SheetNames[0];
+    const sheet = workbook.Sheets[sheetName];
+
+    const filas = XLSX.utils.sheet_to_json(sheet);
+
+    let creados = 0;
+
+    for (const fila of filas) {
+      const nombre = fila['invitados'];
+      const mesa = fila['mesa'];
+      const maxLugares = fila['cantidad de boletos'];
+
+      if (!nombre || !mesa) {
+        continue;
+      }
+
+      const codigo = uuidv4();
+
+      const nuevaInvitacion = new Invitacion({
+        codigo,
+        mesa: Number(mesa),
+        maxLugares: Number(maxLugares) || 1,
+        invitados: [
+          {
+            nombre: String(nombre).trim(),
+            telefono: "",
+            asistentes: 1,
+            acompanante: "",
+            mesaAcompanante: null,
+            confirmado: false,
+            codigoQR: ""
+          }
+        ]
+      });
+
+      await nuevaInvitacion.save();
+
+      creados++;
+    }
+
+    res.json({
+      mensaje: `Importación completa. Invitaciones creadas: ${creados}`
+    });
+
+  } catch (error) {
+    console.log(error);
+    res.json({
+      error: 'Error al importar Excel'
+    });
+  }
 });
 app.listen(PORT, () => {
   console.log(
