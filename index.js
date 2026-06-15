@@ -486,49 +486,90 @@ app.post('/admin/importar-excel', upload.single('archivo'), async (req, res) => 
 
     const filas = XLSX.utils.sheet_to_json(sheet);
 
-    let creados = 0;
+let creados = 0;
+let omitidos = 0;
 
-    for (const fila of filas) {
-      const nombre = fila['invitados'];
-      const mesa = fila['mesa'];
-      const maxLugares = fila['cantidad de boletos'];
+for (const fila of filas) {
+  const nombre = fila['invitados'];
+  const mesa = fila['mesa'];
+  const maxLugares = fila['cantidad de boletos'];
 
-      if (!nombre || !mesa) {
-        continue;
+  if (!nombre || !mesa) {
+    omitidos++;
+    continue;
+  }
+
+  const nombreLimpio = String(nombre).trim();
+
+  const yaExiste = await Invitacion.findOne({
+    "invitados.nombre": {
+      $regex: new RegExp(`^${nombreLimpio}$`, "i")
+    }
+  });
+
+  if (yaExiste) {
+    omitidos++;
+    continue;
+  }
+
+  const codigo = uuidv4();
+
+  const nuevaInvitacion = new Invitacion({
+    codigo,
+    mesa: Number(mesa),
+    maxLugares: Number(maxLugares) || 1,
+    invitados: [
+      {
+        nombre: nombreLimpio,
+        telefono: "",
+        asistentes: 1,
+        acompanante: "",
+        mesaAcompanante: null,
+        confirmado: false,
+        codigoQR: ""
       }
+    ]
+  });
 
-      const codigo = uuidv4();
+  await nuevaInvitacion.save();
 
-      const nuevaInvitacion = new Invitacion({
-        codigo,
-        mesa: Number(mesa),
-        maxLugares: Number(maxLugares) || 1,
-        invitados: [
-          {
-            nombre: String(nombre).trim(),
-            telefono: "",
-            asistentes: 1,
-            acompanante: "",
-            mesaAcompanante: null,
-            confirmado: false,
-            codigoQR: ""
-          }
-        ]
+  creados++;
+}
+
+  res.json({
+  mensaje: `Importación completa. Nuevos: ${creados}. Omitidos: ${omitidos}.`
+});
+  } catch (error) {
+    console.log(error);
+    res.json({
+      error: 'Error al importar Excel'
+    });
+  }
+});
+// ============================
+// ADMIN: ELIMINAR INVITACIÓN
+// ============================
+
+app.delete('/admin/eliminar-invitado/:codigo', async (req, res) => {
+  try {
+    const { codigo } = req.params;
+
+    const eliminado = await Invitacion.findOneAndDelete({ codigo });
+
+    if (!eliminado) {
+      return res.json({
+        error: 'Invitación no encontrada'
       });
-
-      await nuevaInvitacion.save();
-
-      creados++;
     }
 
     res.json({
-      mensaje: `Importación completa. Invitaciones creadas: ${creados}`
+      mensaje: 'Invitación eliminada correctamente'
     });
 
   } catch (error) {
     console.log(error);
     res.json({
-      error: 'Error al importar Excel'
+      error: 'Error al eliminar invitación'
     });
   }
 });

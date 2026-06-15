@@ -85,6 +85,7 @@ accept=".xlsx,.xls"
 <th>Asistentes</th>
 <th>Link</th>
 <th>Editar</th>
+<th>Eliminar</th>
 </tr>
 </thead>
 <tbody id="tabla"></tbody>
@@ -176,6 +177,11 @@ async function cargarInvitados(){
     Editar
   </button>
 </td>
+<td>
+  <button onclick="eliminarInvitado('${inv.codigo}')">
+    Eliminar
+  </button>
+</td>
       </tr>
       `;
     });
@@ -213,6 +219,7 @@ async function editarInvitado(codigo, nombre, mesa, telefono, asistentes, acompa
     })
   });
 
+  
   const data = await res.json();
 
   if(data.error){
@@ -221,9 +228,31 @@ async function editarInvitado(codigo, nombre, mesa, telefono, asistentes, acompa
   }
 
   alert("✅ Invitado actualizado");
+  async function eliminarInvitado(codigo){
+
+  const confirmar =
+  confirm('¿Seguro que quieres eliminar esta invitación?');
+
+  if(!confirmar) return;
+
+  const res =
+  await fetch(`/admin/eliminar-invitado/${codigo}`,{
+    method:'DELETE'
+  });
+
+  const data =
+  await res.json();
+
+  if(data.error){
+    alert(data.error);
+    return;
+  }
+
+  alert('✅ Invitación eliminada');
   cargarInvitados();
 }
-cargarInvitados();
+  cargarInvitados();
+}
 </script>
 
 </body>
