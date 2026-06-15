@@ -110,8 +110,13 @@ async function crearInvitado(){
     return;
   }
 
-  document.getElementById('resultado').innerHTML =
-  `✅ Invitación creada:<br><a href="${data.link}" target="_blank">${data.link}</a>`;
+document.getElementById('resultado').innerHTML =
+`✅ Invitación creada:<br><a href="${data.link}" target="_blank">${data.link}</a>`;
+
+cargarInvitados();
+
+}
+
 async function importarExcel(){
 
   const archivo =
@@ -142,8 +147,6 @@ async function importarExcel(){
   document.getElementById('resultadoExcel').innerText =
   data.mensaje;
 
-  cargarInvitados();
-}
   cargarInvitados();
 }
 
