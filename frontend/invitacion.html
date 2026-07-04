@@ -893,18 +893,13 @@ const asistentes =
 prompt(
 '👥 ¿Cuántos asistirán?\n\nEscribe 1 o 2'
 );
-let acompanante = "";
 
-if(asistentes === "2"){
-  acompanante =
-  prompt(
-    '👤 Ingresa el nombre de tu acompañante'
-  );
-
-  if(!acompanante){
-    alert('Debes ingresar el nombre del acompañante');
-    return;
-  }
+if(
+  asistentes !== "1" &&
+  asistentes !== "2"
+){
+  alert("Solo puedes elegir 1 o 2 asistentes");
+  return;
 }
 
 if(
@@ -929,7 +924,7 @@ try{
 
 const response =
 await fetch(
-'https://fiesta-nadia.onrender.com/confirmar',
+'https://fiesta-nadia.onrender.com/confirmar-general',
 {
 method:'POST',
 
@@ -939,11 +934,9 @@ headers:{
 },
 
 body:JSON.stringify({
-id,
 nombre,
 telefono,
-asistentes,
-acompanante
+asistentes
 })
 
 }

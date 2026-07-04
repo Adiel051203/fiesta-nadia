@@ -62,7 +62,17 @@ type: Boolean,
 default: false
 },
 
-codigoQR: String
+codigoQR: String,
+
+ingreso: {
+  type: Boolean,
+  default: false
+},
+
+horaIngreso: {
+  type: String,
+  default: ""
+}
 }
 ]
 });
@@ -285,9 +295,19 @@ app.get('/acceso', async (req, res) => {
       '❌ No confirmado'
     );
   }
+const yaIngreso = invitado.ingreso;
 
-  res.send(`
-<h1>✅ Acceso válido</h1>
+if (!invitado.ingreso) {
+  invitado.ingreso = true;
+  invitado.horaIngreso = new Date().toLocaleString('es-MX', {
+    timeZone: 'America/Mexico_City'
+  });
+
+  await invitacion.save();
+}
+
+res.send(`
+<h1>${yaIngreso ? '⚠️ QR ya usado' : '✅ Acceso válido'}</h1>
 
 <h2>Personas registradas</h2>
 
@@ -308,6 +328,12 @@ ${
 }
 
 <h3>👥 Total de personas: ${invitado.asistentes}</h3>
+
+${
+  invitado.horaIngreso
+    ? `<h3>🕒 Hora de ingreso: ${invitado.horaIngreso}</h3>`
+    : ""
+}
 `);
 
 });
@@ -570,6 +596,64 @@ app.delete('/admin/eliminar-invitado/:codigo', async (req, res) => {
     console.log(error);
     res.json({
       error: 'Error al eliminar invitación'
+    });
+  }
+});
+app.post('/confirmar-general', async (req, res) => {
+  try {
+    const { nombre, telefono, asistentes } = req.body;
+
+    if (!nombre) {
+      return res.json({
+        error: "Escribe tu nombre"
+      });
+    }
+
+    const invitacion = await Invitacion.findOne({
+      "invitados.nombre": {
+        $regex: new RegExp(`^${nombre.trim()}$`, "i")
+      }
+    });
+
+    if (!invitacion) {
+      return res.json({
+        error: "Invitado no encontrado. Revisa que escribiste tu nombre correctamente."
+      });
+    }
+
+    const invitado = invitacion.invitados.find(i =>
+      i.nombre &&
+      i.nombre.trim().toLowerCase() === nombre.trim().toLowerCase()
+    );
+
+    invitado.telefono = telefono || "";
+    invitado.asistentes = Number(asistentes) || 1;
+    invitado.confirmado = true;
+
+    if (!invitado.codigoQR) {
+      invitado.codigoQR = crypto.randomUUID();
+    }
+
+    await invitacion.save();
+
+    const urlQR =
+    `https://fiesta-nadia.onrender.com/acceso?id=${invitado.codigoQR}`;
+
+    const qrImage =
+    await QRCode.toDataURL(urlQR);
+
+    res.json({
+      mensaje: "Confirmado",
+      qr: qrImage,
+      mesa: invitacion.mesa,
+      asistentes: invitado.asistentes,
+      codigoQR: invitado.codigoQR
+    });
+
+  } catch (error) {
+    console.log(error);
+    res.json({
+      error: "Error del servidor"
     });
   }
 });
