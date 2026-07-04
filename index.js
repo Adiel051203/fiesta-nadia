@@ -609,11 +609,13 @@ app.post('/confirmar-general', async (req, res) => {
       });
     }
 
-    const invitacion = await Invitacion.findOne({
-      "invitados.nombre": {
-        $regex: new RegExp(`^${nombre.trim()}$`, "i")
-      }
-    });
+const nombreBuscado = nombre.trim().toLowerCase();
+
+const invitacion = await Invitacion.findOne({
+  "invitados.nombre": {
+    $regex: new RegExp(nombreBuscado, "i")
+  }
+});
 
     if (!invitacion) {
       return res.json({
@@ -621,10 +623,10 @@ app.post('/confirmar-general', async (req, res) => {
       });
     }
 
-    const invitado = invitacion.invitados.find(i =>
-      i.nombre &&
-      i.nombre.trim().toLowerCase() === nombre.trim().toLowerCase()
-    );
+const invitado = invitacion.invitados.find(i =>
+  i.nombre &&
+  i.nombre.toLowerCase().includes(nombreBuscado)
+);
 
     invitado.telefono = telefono || "";
     invitado.asistentes = Number(asistentes) || 1;
