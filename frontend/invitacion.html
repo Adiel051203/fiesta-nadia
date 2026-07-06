@@ -8,6 +8,7 @@ content="🎉 Fiesta 50 de Nadia">
 content="✨ Una noche inolvidable inspirada en los 80s & 90s ✨
 15 de Agosto • 7:00 PM">
 
+
 <meta property="og:image"
 content="https://fiesta-nadia.onrender.com/assets/preview.jpg">
 
@@ -665,6 +666,15 @@ class="confirm-btn"
 id="confirmarBtn">
 
 ✨ Confirmar asistencia
+<p style="
+margin-top:10px;
+font-size:1.1rem;
+font-weight:bold;
+color:#ffd700;
+text-shadow:0 0 10px #ff00ff;
+">
+🚫 Evento exclusivo para adultos · Sin niños
+</p>
 
 </button>
 
@@ -889,18 +899,7 @@ prompt(
 
 if(!telefono) return;
 
-const asistentes =
-prompt(
-'👥 ¿Cuántos asistirán?\n\nEscribe 1 o 2'
-);
 
-if(
-  asistentes !== "1" &&
-  asistentes !== "2"
-){
-  alert("Solo puedes elegir 1 o 2 asistentes");
-  return;
-}
 
 if(
 asistentes !== '1' &&
