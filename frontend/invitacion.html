@@ -661,11 +661,6 @@ target="_blank">
 
 <br><br>
 
-<button
-class="confirm-btn"
-id="confirmarBtn">
-
-✨ Confirmar asistencia
 <p style="
 margin-top:10px;
 font-size:1.1rem;
@@ -675,6 +670,12 @@ text-shadow:0 0 10px #ff00ff;
 ">
 🚫 Evento exclusivo para adultos · Sin niños
 </p>
+
+<button
+class="confirm-btn"
+id="confirmarBtn">
+
+✨ Confirmar asistencia
 
 </button>
 
@@ -887,7 +888,7 @@ async ()=>{
 
 const nombre =
 prompt(
-'✨ Ingresa tu nombre para confirmar asistencia'
+'👤 Escribe tu nombre para generar tu boleto'
 );
 
 if(!nombre) return;
@@ -899,14 +900,16 @@ prompt(
 
 if(!telefono) return;
 
-
+const asistentes =
+prompt(
+  '👥 ¿Cuántos asistirán?\n\nEscribe 1 o 2'
+);
 
 if(
 asistentes !== '1' &&
 asistentes !== '2'
 ){
-alert(
-'Solo puedes seleccionar 1 o 2 asistentes'
+alert('Solo puedes seleccionar 1 o 2 asistentes'
 );
 return;
 }
