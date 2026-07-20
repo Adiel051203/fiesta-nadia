@@ -687,40 +687,23 @@ font-size:1.2rem;
 font-weight:bold;
 ">
 </p>
-
-<div id="qrContainer">
-
-<h2>
-🎟 Tu acceso VIP
-</h2>
-
-<img
-id="qrImage"src="">
-<br><br>
-
-<button
-id="whatsappBtn"
+<!-- QR deshabilitado temporalmente -->
+<p
+id="confirmacionTexto"
 style="
 display:none;
-padding:15px 25px;
-border:none;
-border-radius:20px;
-cursor:pointer;
-font-size:1rem;
-background:#25D366;
-color:white;
+margin-top:25px;
+font-size:1.3rem;
 font-weight:bold;
+color:#ffe066;
 ">
-
-📲 Enviar QR por WhatsApp
-
-</button>
-</div>
+✅ Tu asistencia fue confirmada correctamente.
+</p>
+<!-- QR deshabilitado temporalmente -->
 
 </div>
 
 </div>
-
 
 <script>
 
@@ -888,7 +871,7 @@ async ()=>{
 
 const nombre =
 prompt(
-'👤 Escribe tu nombre para generar tu boleto'
+'👤 Escribe tu nombre para confirmar tu asistencia'
 );
 
 if(!nombre) return;
@@ -958,55 +941,31 @@ document
 'mesaTexto'
 )
 .innerHTML =
-'🪑 Mesa asignada: ' +
-data.mesa;
+'';
 
 document
 .getElementById(
-'qrContainer'
+'confirmacionTexto'
 )
 .style.display =
 'block';
 
 document
 .getElementById(
-'qrImage'
+'confirmarBtn'
 )
-.src =
-data.qr;
-const whatsappBtn =
-document.getElementById(
-'whatsappBtn'
-);
+.disabled =
+true;
 
-whatsappBtn.style.display =
-'inline-block';
+document
+.getElementById(
+'confirmarBtn'
+)
+.innerText =
+'✅ Asistencia confirmada';
 
-whatsappBtn.onclick = () => {
-
-const mensaje =
-encodeURIComponent(
-
-`🎉 ¡Confirmé mi asistencia al festejo de Nadia!
-
-🪑 Mesa: ${data.mesa}
-👥 Asistentes: ${data.asistentes || 1}
-
-🎟 Mi código de acceso:
-https://fiesta-nadia.onrender.com/pase.html?id=${data.codigoQR}
-
-Nos vemos el 15 de agosto 💜`
-
-);
-
-window.open(
-`https://wa.me/?text=${mensaje}`,
-'_blank'
-);
-
-};
 alert(
-'🎟 ¡Tu acceso está listo!\n\nGuarda este QR, será necesario para entrar al evento.'
+'✅ ¡Gracias!\n\nTu asistencia ha sido confirmada correctamente.'
 );
 
 window.scrollTo({
